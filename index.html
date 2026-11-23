@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TamayoBOT System — Dashboard</title>
+  <style>
+    :root {
+      --bg: #071022;
+      --surface: #0d1b36;
+      --surface-2: #14274c;
+      --border: #1e3a6e;
+      --text: #eff6ff;
+      --muted: #93b4e0;
+      --accent: #38bdf8;
+      --accent-strong: #2563eb;
+      --accent-text: #041126;
+      --cyan: #0ea5e9;
+    }
+    * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; }
+    a { text-decoration: none; color: inherit; }
+
+    .navbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 22px; background: rgba(7, 16, 34, 0.92); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; cursor: pointer; }
+    .brand img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
+    .icon-btn {
+      background: var(--surface-2); border: 1px solid var(--border); color: var(--text);
+      padding: 8px 14px; border-radius: 12px; font-weight: 600; font-size: 13px;
+      display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+    }
+    .icon-btn:hover { border-color: var(--accent); }
+    .user-pill {
+      display: inline-flex; align-items: center; gap: 8px; background: var(--surface-2);
+      border: 1px solid var(--border); padding: 4px 12px 4px 4px; border-radius: 999px; font-size: 13px; font-weight: 600;
+    }
+    .user-pill img { width: 28px; height: 28px; border-radius: 50%; }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 28px 18px 60px; }
+
+    .hero { text-align: center; padding: 36px 12px 24px; }
+    .hero-avatar {
+      width: 132px; height: 132px; border-radius: 50%; object-fit: cover;
+      border: 3px solid var(--accent); box-shadow: 0 0 42px rgba(37, 99, 235, 0.35); margin-bottom: 18px;
+    }
+    .pill-tag {
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px;
+      border-radius: 999px; background: var(--surface); border: 1px solid var(--border);
+      font-size: 12px; color: var(--accent); font-weight: 600; margin-bottom: 16px; letter-spacing: 0.3px;
+    }
+    .hero h1 { font-size: clamp(28px, 6vw, 44px); margin: 0 0 14px; line-height: 1.15; }
+    .hero p { max-width: 560px; margin: 0 auto 28px; color: var(--muted); line-height: 1.6; font-size: 15px; }
+    .hero-btns { display: flex; flex-direction: column; gap: 12px; max-width: 360px; margin: 0 auto; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-strong), var(--cyan)); color: #ffffff; font-weight: 700;
+      padding: 14px 20px; border-radius: 14px; border: none; font-size: 15px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn-primary:hover { filter: brightness(1.08); }
+    .btn-secondary {
+      background: var(--surface); color: var(--text); font-weight: 600;
+      padding: 14px 20px; border-radius: 14px; border: 1px solid var(--border); font-size: 15px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn-secondary:hover { border-color: var(--accent); }
+
+    .search-box {
+      width: 100%; background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); padding: 13px 16px; border-radius: 14px; font-size: 15px; margin: 18px 0 22px;
+    }
+    .search-box:focus { outline: none; border-color: var(--accent); }
+    .guild-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .guild-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 18px; overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .guild-banner {
+      height: 76px; background: linear-gradient(135deg, #173569, #0b1830); position: relative;
+      display: flex; justify-content: center; align-items: flex-end;
+    }
+    .guild-icon {
+      width: 58px; height: 58px; border-radius: 50%; border: 3px solid var(--surface);
+      background: var(--surface-2); transform: translateY(24px); object-fit: cover;
+      display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; color: var(--accent);
+    }
+    .guild-body { padding: 32px 18px 18px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .btn-ir {
+      background: var(--accent); color: var(--accent-text); padding: 9px 18px; border-radius: 12px;
+      font-weight: 700; font-size: 14px; border: none; cursor: pointer;
+    }
+    .btn-invite {
+      background: var(--surface-2); color: var(--text); border: 1px solid var(--border);
+      padding: 9px 14px; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer;
+    }
+
+    .server-hero {
+      background: linear-gradient(180deg, rgba(37, 99, 235, 0.2), var(--surface));
+      border: 1px solid var(--border); border-radius: 20px; padding: 22px; margin-bottom: 22px;
+    }
+    .server-title-row { display: flex; align-items: center; gap: 14px; margin: 14px 0; }
+    .server-title-row img { width: 54px; height: 54px; border-radius: 14px; object-fit: cover; border: 1px solid var(--border); }
+    .quick-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    .q-pill {
+      background: var(--surface-2); border: 1px solid var(--border); color: var(--text);
+      padding: 9px 14px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .q-pill.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 26px; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px;
+    }
+    .stat-card .num { font-size: 24px; font-weight: 800; margin: 6px 0 2px; color: var(--accent); }
+    .stat-card .lbl { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .cat-title { font-size: 20px; font-weight: 700; margin: 26px 0 4px; }
+    .cat-sub { font-size: 13px; color: var(--muted); margin: 0 0 14px; }
+    .modules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 14px; }
+    .mod-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 18px;
+      cursor: pointer; transition: transform 0.15s, border-color 0.15s;
+    }
+    .mod-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+    .mod-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .mod-icon {
+      width: 40px; height: 40px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: var(--accent);
+    }
+    .badge-status {
+      font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px;
+      background: rgba(56, 189, 248, 0.14); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+    .mod-card h3 { margin: 0 0 6px; font-size: 16px; }
+    .mod-card p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(4, 10, 24, 0.78); display: none;
+      align-items: center; justify-content: center; padding: 16px; z-index: 100;
+    }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+      max-width: 480px; width: 100%; padding: 22px;
+    }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+    .field select, .field input, .field textarea {
+      width: 100%; background: var(--surface-2); border: 1px solid var(--border);
+      color: var(--text); padding: 10px 12px; border-radius: 12px; font-size: 14px;
+    }
+    .switch-row {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--surface-2); padding: 12px 14px; border-radius: 12px; margin-bottom: 10px;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="brand" onclick="goHome()">
+      <img id="navBotImg" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Bot" />
+      <span id="navBotName">TamayoBOT System</span>
+    </div>
+    <div class="nav-actions" id="navActions">
+      <a href="/auth/discord" class="icon-btn"><span>[&gt;]</span><span>Login</span></a>
+    </div>
+  </nav>
+
+  <main id="viewLanding" class="container">
+    <section class="hero">
+      <img id="heroBotImg" class="hero-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="TamayoBOT" />
+      <div><span class="pill-tag"><span>◈</span><span>TAMAYODEV SYSTEM • PANEL OFICIAL</span></span></div>
+      <h1>Tu servidor de Discord al siguiente nivel</h1>
+      <p>
+        Crea una comunidad organizada y segura con moderacion avanzada, antiraid, autoroles,
+        bienvenidas y anuncios desde un solo panel web.
+      </p>
+      <div class="hero-btns">
+        <a id="btnInviteHero" href="#" target="_blank" class="btn-primary"><span>+</span><span>Anadir el bot a Discord</span></a>
+        <button id="btnManageHero" class="btn-secondary" onclick="handleManageClick()"><span>#</span><span>Gestionar servidores</span></button>
+      </div>
+    </section>
+  </main>
+
+  <section id="viewServers" class="container hidden">
+    <h1 style="text-align:center;margin-bottom:6px;">Selecciona un servidor</h1>
+    <p style="text-align:center;color:var(--muted);margin-top:0;">Elige el servidor que deseas administrar con TamayoBOT System</p>
+    <input id="serverSearch" class="search-box" type="text" placeholder="Buscar servidores por nombre..." oninput="renderServers()" />
+    <div id="guildGrid" class="guild-grid"></div>
+  </section>
+
+  <section id="viewDashboard" class="container hidden">
+    <div style="margin-bottom:12px;">
+      <button class="icon-btn" onclick="showServers()"><span>&lt;-</span><span>Cambiar servidor</span></button>
+    </div>
+
+    <div class="server-hero">
+      <span class="pill-tag"><span>■</span><span>DASHBOARD DEL SERVIDOR</span></span>
+      <div class="server-title-row">
+        <img id="dashGuildIcon" src="" alt="Icon" />
+        <div>
+          <h2 id="dashGuildName" style="margin:0;">Bienvenido</h2>
+          <small style="color:var(--muted);">TamayoDev Services &lt;/&gt; • Panel de control activo</small>
+        </div>
+      </div>
+      <p style="color:var(--muted);font-size:14px;line-height:1.5;margin:0;">
+        Explora los modulos disponibles y configura la seguridad, automatizacion y mensajes de tu comunidad sin escribir comandos.
+      </p>
+      <div class="quick-pills">
+        <button class="q-pill active" onclick="openModule('ajustes')">Ajustes</button>
+        <button class="q-pill" onclick="openModule('bienvenidas')">Bienvenidas</button>
+        <button class="q-pill" onclick="openModule('autoroles')">Autoroles</button>
+        <button class="q-pill" onclick="openModule('anuncios')">Anuncios</button>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="lbl">Miembros</div><div class="num" id="statMembers">0</div></div>
+      <div class="stat-card"><div class="lbl">Canales</div><div class="num" id="statChannels">0</div></div>
+      <div class="stat-card"><div class="lbl">Roles</div><div class="num" id="statRoles">0</div></div>
+    </div>
+
+    <h3 class="cat-title">Principal</h3>
+    <p class="cat-sub">Explora los modulos clave de configuracion</p>
+    <div class="modules-grid">
+      <div class="mod-card" onclick="openModule('ajustes')">
+        <div class="mod-top"><div class="mod-icon">01</div><span class="badge-status">ACTIVO</span></div>
+        <h3>Ajustes y Seguridad</h3>
+        <p>Activa o desactiva Antiraid, Anti Bots, Verificacion y define el canal de logs.</p>
+      </div>
+      <div class="mod-card" onclick="openModule('bienvenidas')">
+        <div class="mod-top"><div class="mod-icon">02</div><span class="badge-status">AUTO</span></div>
+        <h3>Bienvenidas</h3>
+        <p>Configura el canal y mensaje automatico cada vez que entra un nuevo miembro.</p>
+      </div>
+      <div class="mod-card" onclick="openModule('autoroles')">
+        <div class="mod-top"><div class="mod-icon">03</div><span class="badge-status">ROLES</span></div>
+        <h3>Autoroles</h3>
+        <p>Asigna un rol automaticamente a quienes ingresen a tu servidor.</p>
+      </div>
+      <div class="mod-card" onclick="openModule('anuncios')">
+        <div class="mod-top"><div class="mod-icon">04</div><span class="badge-status">EMBED</span></div>
+        <h3>Anuncios Oficiales</h3>
+        <p>Redacta y envia comunicados con diseno embed directo a cualquier canal.</p>
+      </div>
+      <div class="mod-card" onclick="openModule('auditoria')">
+        <div class="mod-top"><div class="mod-icon">05</div><span class="badge-status">LOGS</span></div>
+        <h3>Auditoria</h3>
+        <p>Revisa que cambios hizo tu equipo en el dashboard y quien los aplico.</p>
+      </div>
+    </div>
+  </section>
+
+  <div id="modalBackdrop" class="modal-backdrop" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <h3 id="modalTitle" style="margin:0;">Configurar modulo</h3>
+        <button class="icon-btn" onclick="closeModal()">X</button>
+      </div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    let appState = { loggedIn: false, user: null, guilds: [], inviteUrl: '#' };
+    let currentGuild = null;
+
+    async function init() {
+      const res = await fetch('/api/me');
+      appState = await res.json();
+
+      document.getElementById('navBotName').textContent = appState.botName;
+      if (appState.botAvatar) {
+        document.getElementById('navBotImg').src = appState.botAvatar;
+        document.getElementById('heroBotImg').src = appState.botAvatar;
+      }
+      document.getElementById('btnInviteHero').href = appState.inviteUrl;
+
+      const navActions = document.getElementById('navActions');
+      if (appState.loggedIn) {
+        navActions.innerHTML = `
+          <button class="icon-btn" onclick="showServers()">Servidores</button>
+          <div class="user-pill">
+            <img src="${appState.user.avatar}" alt="Avatar" />
+            <span>${appState.user.username}</span>
+          </div>
+          <a href="/auth/logout" class="icon-btn">Salir</a>
+        `;
+        document.getElementById('btnManageHero').innerHTML = '<span>#</span><span>Ir a mis servidores</span>';
+      } else {
+        navActions.innerHTML = '<a href="/auth/discord" class="icon-btn"><span>[&gt;]</span><span>Login con Discord</span></a>';
+      }
+    }
+
+    function handleManageClick() {
+      if (!appState.loggedIn) {
+        window.location.href = '/auth/discord';
+      } else {
+        showServers();
+      }
+    }
+
+    function goHome() {
+      document.getElementById('viewLanding').classList.remove('hidden');
+      document.getElementById('viewServers').classList.add('hidden');
+      document.getElementById('viewDashboard').classList.add('hidden');
+    }
+
+    function showServers() {
+      document.getElementById('viewLanding').classList.add('hidden');
+      document.getElementById('viewDashboard').classList.add('hidden');
+      document.getElementById('viewServers').classList.remove('hidden');
+      renderServers();
+    }
+
+    function renderServers() {
+      const q = document.getElementById('serverSearch').value.toLowerCase();
+      const grid = document.getElementById('guildGrid');
+      grid.innerHTML = '';
+
+      const list = appState.guilds.filter(g => g.name.toLowerCase().includes(q));
+      list.forEach(g => {
+        const card = document.createElement('div');
+        card.className = 'guild-card';
+        const iconHtml = g.icon
+          ? `<img class="guild-icon" src="${g.icon}" alt="${g.name}" />`
+          : `<div class="guild-icon">${g.name.charAt(0)}</div>`;
+
+        const actionBtn = g.botInGuild
+          ? `<button class="btn-ir" onclick="openGuild('${g.id}')">Ir</button>`
+          : `<a class="btn-invite" href="${appState.inviteUrl}&guild_id=${g.id}" target="_blank">Invitar</a>`;
+
+        card.innerHTML = `
+          <div class="guild-banner">${iconHtml}</div>
+          <div class="guild-body">
+            <div>
+              <div style="font-weight:700;">${g.name}</div>
+              <small style="color:var(--muted);">Admin • ${g.botInGuild ? g.memberCount + ' miembros' : 'Bot no anadido'}</small>
+            </div>
+            ${actionBtn}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    async function openGuild(guildId) {
+      const res = await fetch('/api/guild/' + guildId);
+      if (!res.ok) return alert('No se pudo cargar el servidor.');
+      currentGuild = await res.json();
+
+      document.getElementById('viewServers').classList.add('hidden');
+      document.getElementById('viewDashboard').classList.remove('hidden');
+
+      document.getElementById('dashGuildName').textContent = 'Bienvenido a ' + currentGuild.name;
+      document.getElementById('dashGuildIcon').src = currentGuild.icon || 'https://cdn.discordapp.com/embed/avatars/0.png';
+      document.getElementById('statMembers').textContent = currentGuild.memberCount;
+      document.getElementById('statChannels').textContent = currentGuild.channelCount;
+      document.getElementById('statRoles').textContent = currentGuild.roleCount;
+    }
+
+    function openModule(type) {
+      if (!currentGuild) return;
+      const cfg = currentGuild.config;
+      const body = document.getElementById('modalBody');
+      const title = document.getElementById('modalTitle');
+
+      const channelOptions = (selected) =>
+        '<option value="">-- Ninguno --</option>' +
+        currentGuild.textChannels.map(c => `<option value="${c.id}" ${c.id===selected?'selected':''}>#${c.name}</option>`).join('');
+
+      const roleOptions = (selected) =>
+        '<option value="">-- Ninguno --</option>' +
+        currentGuild.roles.map(r => `<option value="${r.id}" ${r.id===selected?'selected':''}>@${r.name}</option>`).join('');
+
+      if (type === 'ajustes') {
+        title.textContent = 'Ajustes y Seguridad';
+        body.innerHTML = `
+          <div class="switch-row"><span>Antiraid</span><input type="checkbox" id="cfgAntiraid" ${cfg.antiraid?'checked':''} /></div>
+          <div class="switch-row"><span>Anti Bots</span><input type="checkbox" id="cfgAntibots" ${cfg.antibots?'checked':''} /></div>
+          <div class="switch-row"><span>Verificacion</span><input type="checkbox" id="cfgVerif" ${cfg.verification?'checked':''} /></div>
+          <div class="field"><label>Canal de Logs</label><select id="cfgLogs">${channelOptions(cfg.logsChannelId)}</select></div>
+          <button class="btn-primary" style="width:100%;" onclick="saveAjustes()">Guardar cambios</button>
+        `;
+      } else if (type === 'bienvenidas') {
+        title.textContent = 'Bienvenidas Automaticas';
+        body.innerHTML = `
+          <div class="field"><label>Canal de Bienvenidas</label><select id="cfgWelcomeCh">${channelOptions(cfg.welcomeChannelId)}</select></div>
+          <div class="field"><label>Mensaje (usa {user} y {server})</label><textarea id="cfgWelcomeMsg" rows="3">${cfg.welcomeMessage}</textarea></div>
+          <button class="btn-primary" style="width:100%;" onclick="saveBienvenidas()">Guardar bienvenidas</button>
+        `;
+      } else if (type === 'autoroles') {
+        title.textContent = 'Autoroles al entrar';
+        body.innerHTML = `
+          <div class="field"><label>Rol automatico para nuevos miembros</label><select id="cfgAutorole">${roleOptions(cfg.autoroleId)}</select></div>
+          <button class="btn-primary" style="width:100%;" onclick="saveAutorole()">Guardar autorol</button>
+        `;
+      } else if (type === 'anuncios') {
+        title.textContent = 'Enviar Anuncio al Servidor';
+        body.innerHTML = `
+          <div class="field"><label>Canal destino</label><select id="annChannel">${channelOptions('')}</select></div>
+          <div class="field"><label>Titulo</label><input id="annTitle" value="ANUNCIO OFICIAL" /></div>
+          <div class="field"><label>Mensaje</label><textarea id="annMsg" rows="4" placeholder="Escribe tu comunicado..."></textarea></div>
+          <button class="btn-primary" style="width:100%;" onclick="sendAnnouncement()">Publicar ahora</button>
+        `;
+      } else if (type === 'auditoria') {
+        title.textContent = 'Auditoria del Dashboard';
+        const logs = cfg.auditLogs || [];
+        body.innerHTML = logs.length
+          ? logs.map(l => `<div class="switch-row"><span><strong>${l.user}</strong>: ${l.action}</span><small style="color:var(--muted);">${l.time}</small></div>`).join('')
+          : '<p style="color:var(--muted);">Aun no hay cambios registrados en esta sesion.</p>';
+      }
+
+      document.getElementById('modalBackdrop').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('modalBackdrop').style.display = 'none';
+    }
+
+    async function saveSettings(payload) {
+      const res = await fetch('/api/guild/' + currentGuild.id + '/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.ok) {
+        currentGuild.config = data.config;
+        closeModal();
+        alert('Configuracion guardada.');
+      }
+    }
+
+    function saveAjustes() {
+      saveSettings({
+        antiraid: document.getElementById('cfgAntiraid').checked,
+        antibots: document.getElementById('cfgAntibots').checked,
+        verification: document.getElementById('cfgVerif').checked,
+        logsChannelId: document.getElementById('cfgLogs').value
+      });
+    }
+
+    function saveBienvenidas() {
+      saveSettings({
+        welcomeChannelId: document.getElementById('cfgWelcomeCh').value,
+        welcomeMessage: document.getElementById('cfgWelcomeMsg').value
+      });
+    }
+
+    function saveAutorole() {
+      saveSettings({
+        autoroleId: document.getElementById('cfgAutorole').value
+      });
+    }
+
+    async function sendAnnouncement() {
+      const channelId = document.getElementById('annChannel').value;
+      const title = document.getElementById('annTitle').value;
+      const message = document.getElementById('annMsg').value;
+      if (!channelId || !message) return alert('Selecciona un canal y escribe un mensaje.');
+
+      const res = await fetch('/api/guild/' + currentGuild.id + '/announce', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channelId, title, message })
+      });
+      if (res.ok) {
+        closeModal();
+        alert('Anuncio enviado a Discord.');
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
